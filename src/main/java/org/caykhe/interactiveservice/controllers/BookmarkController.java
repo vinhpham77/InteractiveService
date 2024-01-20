@@ -8,14 +8,15 @@ import org.caykhe.interactiveservice.services.BookmarkService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.Optional;
 
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/bookmarks")
 public class BookmarkController {
     final BookmarkService bookmarkService;
+
     @PostMapping("/createBookmark/{username}")
     public ResponseEntity<?> createBookmark(@PathVariable String username) {
         return new ResponseEntity<>(bookmarkService.createBookmark(username), HttpStatus.CREATED);

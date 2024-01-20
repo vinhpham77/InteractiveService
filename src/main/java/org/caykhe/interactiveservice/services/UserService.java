@@ -14,7 +14,6 @@ import java.util.Optional;
 
 import static org.springframework.http.HttpStatus.*;
 
-
 @Service
 @RequiredArgsConstructor
 public class UserService {

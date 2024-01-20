@@ -19,9 +19,7 @@ public class VoteController {
     public List<Vote> getAllVotes() {
         return voteService.getAllVotes();
     }
-
-
-
+    
     @PostMapping("/createVote")
     public ResponseEntity<?> createVote(@RequestBody VoteRequest voteRequest) {
         return new ResponseEntity<>(voteService.createVote(voteRequest), HttpStatus.OK) ;
@@ -33,13 +31,11 @@ public class VoteController {
     }
     @GetMapping("/findBy")
     public ResponseEntity<?> findBy(@RequestParam Integer targetId,@RequestParam Boolean targetType) {
-
         return new ResponseEntity<>(voteService.voteById(targetId,targetType),HttpStatus.OK) ;
     }
 
     @GetMapping("/checkVote")
     public ResponseEntity<?> checkVote(@RequestParam Integer targetId,@RequestParam Boolean targetType) {
-
         return new ResponseEntity<>(voteService.hasVoted(targetId,targetType),HttpStatus.OK) ;
     }
 }

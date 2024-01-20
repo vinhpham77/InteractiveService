@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-
 @Service
 @RequiredArgsConstructor
 public class BookmarkService {
@@ -22,7 +21,6 @@ public class BookmarkService {
     private final BookmarkRepository bookmarkRepository;
     private final BookmarkDetailRepository bookmarkDetailRepository;
     private final UserService userService;
-
 
     public Bookmark createBookmark(String username) {
         Optional<User> user = userService.getByUsername(username);
