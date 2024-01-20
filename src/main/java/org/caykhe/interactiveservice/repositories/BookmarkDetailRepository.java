@@ -1,7 +1,8 @@
 package org.caykhe.interactiveservice.repositories;
 
-import org.caykhe.userservice.models.Bookmark;
-import org.caykhe.userservice.models.BookmarkDetail;
+
+import org.caykhe.interactiveservice.models.Bookmark;
+import org.caykhe.interactiveservice.models.BookmarkDetail;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

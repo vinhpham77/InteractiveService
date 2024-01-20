@@ -16,7 +16,7 @@ public class VoteId implements Serializable {
 
     private Integer targetId;
     private Boolean targetType = false;
-    private User user;
+    private String user;
 
     @Override
     public boolean equals(Object o) {

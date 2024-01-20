@@ -1,9 +1,9 @@
 package org.caykhe.interactiveservice.controllers;
 
 import lombok.RequiredArgsConstructor;
-import org.caykhe.userservice.dtos.VoteRequest;
-import org.caykhe.userservice.models.Vote;
-import org.caykhe.userservice.services.VoteService;
+import org.caykhe.interactiveservice.dtos.VoteRequest;
+import org.caykhe.interactiveservice.models.Vote;
+import org.caykhe.interactiveservice.services.VoteService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

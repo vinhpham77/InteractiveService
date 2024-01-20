@@ -1,9 +1,8 @@
 package org.caykhe.interactiveservice.repositories;
 
 
-import org.caykhe.userservice.models.User;
-import org.caykhe.userservice.models.Vote;
-import org.caykhe.userservice.models.VoteId;
+import org.caykhe.interactiveservice.models.Vote;
+import org.caykhe.interactiveservice.models.VoteId;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -14,12 +13,12 @@ import java.util.Optional;
 
 @Repository
 public interface VoteRepository extends JpaRepository<Vote, VoteId> {
-    Optional<Vote> findByTargetIdAndTargetTypeAndUser(Integer targetId, Boolean targetType, User user);
+    Optional<Vote> findByTargetIdAndTargetTypeAndUser(Integer targetId, Boolean targetType, String user);
     @Modifying
     @Query("DELETE FROM Vote v WHERE v.targetId = :targetId AND v.targetType = :targetType AND v.user = :user")
     int deleteByTargetIdAndTargetTypeAndUser(
             @Param("targetId") Integer targetId,
             @Param("targetType") Boolean targetType,
-            @Param("user") User user
+            @Param("user") String user
     );
 }

@@ -3,11 +3,11 @@ package org.caykhe.interactiveservice.services;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.caykhe.userservice.dtos.ApiException;
-import org.caykhe.userservice.dtos.VoteRequest;
-import org.caykhe.userservice.models.User;
-import org.caykhe.userservice.models.Vote;
-import org.caykhe.userservice.repositories.VoteRepository;
+import org.caykhe.interactiveservice.dtos.ApiException;
+import org.caykhe.interactiveservice.dtos.User;
+import org.caykhe.interactiveservice.dtos.VoteRequest;
+import org.caykhe.interactiveservice.models.Vote;
+import org.caykhe.interactiveservice.repositories.VoteRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -30,18 +30,18 @@ public class VoteService {
 
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        return voteRepository.findByTargetIdAndTargetTypeAndUser(targetId,targetType,user)
+        return voteRepository.findByTargetIdAndTargetTypeAndUser(targetId,targetType,user.getUsername())
                 .orElseThrow(() -> new ApiException("Vote không tìm thấy", HttpStatus.NOT_FOUND));
     }
     @Transactional
     public Vote createVote(VoteRequest voteRequest) {
-        var user = userService.getUserByUsername(voteRequest.getUsername());
-        User managedUser = entityManager.merge(user);
+        var user = userService.getByUsername(voteRequest.getUsername());
+        User managedUser = entityManager.merge(user.get());
         Vote vote = Vote.builder()
                 .targetId(voteRequest.getTargetId())
                 .voteType(voteRequest.getVoteType())
                 .targetType(voteRequest.getTargetType())
-                .user(managedUser)
+                .user(managedUser.getUsername())
                 .updatedAt(Instant.now()).build();
         return voteRepository.save(vote);
     }
@@ -60,7 +60,7 @@ public class VoteService {
         }
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        Optional<Vote> vote= voteRepository.findByTargetIdAndTargetTypeAndUser(targetId,targetType,user);
+        Optional<Vote> vote= voteRepository.findByTargetIdAndTargetTypeAndUser(targetId,targetType,user.getUsername());
         return vote.orElse(null);
 
     }

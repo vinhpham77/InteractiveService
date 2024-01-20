@@ -1,15 +1,14 @@
 package org.caykhe.interactiveservice.services;
 
 import lombok.RequiredArgsConstructor;
-import org.caykhe.userservice.dtos.ApiException;
-import org.caykhe.userservice.dtos.BookmarkDetailRequest;
-import org.caykhe.userservice.models.Bookmark;
-import org.caykhe.userservice.models.BookmarkDetail;
-import org.caykhe.userservice.models.BookmarkDetailId;
-import org.caykhe.userservice.models.User;
-import org.caykhe.userservice.repositories.BookmarkDetailRepository;
-import org.caykhe.userservice.repositories.BookmarkRepository;
-import org.caykhe.userservice.repositories.UserRepository;
+import org.caykhe.interactiveservice.dtos.ApiException;
+import org.caykhe.interactiveservice.dtos.BookmarkDetailRequest;
+import org.caykhe.interactiveservice.dtos.User;
+import org.caykhe.interactiveservice.models.Bookmark;
+import org.caykhe.interactiveservice.models.BookmarkDetail;
+import org.caykhe.interactiveservice.models.BookmarkDetailId;
+import org.caykhe.interactiveservice.repositories.BookmarkDetailRepository;
+import org.caykhe.interactiveservice.repositories.BookmarkRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -22,13 +21,17 @@ public class BookmarkService {
 
     private final BookmarkRepository bookmarkRepository;
     private final BookmarkDetailRepository bookmarkDetailRepository;
-    private final UserRepository userRepository;
+    private final UserService userService;
 
 
     public Bookmark createBookmark(String username) {
-        Optional<User> user = userRepository.findByUsername(username);
+        Optional<User> user = userService.getByUsername(username);
         Bookmark bookmark = new Bookmark();
-        user.ifPresent(bookmark::setUsername);
+        if(user.isPresent()){
+            bookmark=Bookmark.builder()
+                    .username(username).build();
+        }
+
         return bookmarkRepository.save(bookmark);
     }
 
@@ -48,10 +51,10 @@ public class BookmarkService {
     }
     
     public BookmarkDetail bookmark(String username, BookmarkDetailRequest request) {
-        Optional<User> userOptional = userRepository.findByUsername(username);
+        Optional<User> userOptional = userService.getByUsername(username);
 
         if (userOptional.isPresent()) {
-            Optional<Bookmark> bookmarkOptional = bookmarkRepository.findByUsername(userOptional.get());
+            Optional<Bookmark> bookmarkOptional = bookmarkRepository.findByUsername(String.valueOf(userOptional.get()));
             Bookmark bookmark;
             bookmark = bookmarkOptional.orElseGet(() -> createBookmark(username));
             return addBookmarkDetail(bookmark, request.getTargetId(), request.getType());
@@ -65,10 +68,10 @@ public class BookmarkService {
     }
 
     public void unBookmark(String username, BookmarkDetailRequest bookmarkPostRequest) {
-        User user = userRepository.findByUsername(username)
+        User user = userService.getByUsername(username)
                 .orElseThrow(() -> new ApiException("User not found with username: " + username, HttpStatus.NOT_FOUND));
 
-        Bookmark bookmark = bookmarkRepository.findByUsername(user)
+        Bookmark bookmark = bookmarkRepository.findByUsername(user.getUsername())
                 .orElseThrow(() -> new ApiException("Bookmark not found for user: " + username, HttpStatus.NOT_FOUND));
 
         Integer targetId = bookmarkPostRequest.getTargetId();
@@ -85,9 +88,9 @@ public class BookmarkService {
     }
 
     public Boolean isBookmark(String username, BookmarkDetailRequest bookmarkPostRequest) {
-        Optional<User> user = userRepository.findByUsername(username);
+        Optional<User> user = userService.getByUsername(username);
         if (user.isPresent()) {
-            Optional<Bookmark> bookmark = bookmarkRepository.findByUsername(user.get());
+            Optional<Bookmark> bookmark = bookmarkRepository.findByUsername(user.get().getUsername());
             if (bookmark.isEmpty()) {
                 return false;
             } else {

@@ -18,8 +18,7 @@ public class Bookmark {
     private Integer id;
 
     @NotNull
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "username", nullable = false, referencedColumnName = "username")
-    private User username;
+
+    private String username;
 
 }

@@ -1,14 +1,13 @@
 package org.caykhe.interactiveservice.controllers;
 
 import lombok.RequiredArgsConstructor;
-import org.caykhe.userservice.dtos.BookmarkDetailRequest;
-import org.caykhe.userservice.models.Bookmark;
-import org.caykhe.userservice.models.BookmarkDetail;
-import org.caykhe.userservice.services.BookmarkService;
+import org.caykhe.interactiveservice.dtos.BookmarkDetailRequest;
+import org.caykhe.interactiveservice.models.Bookmark;
+import org.caykhe.interactiveservice.models.BookmarkDetail;
+import org.caykhe.interactiveservice.services.BookmarkService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.Optional;
 
 

@@ -28,10 +28,7 @@ public class Vote {
     private Boolean targetType = false;
 
     @Id
-    @ManyToOne
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "username", nullable = false, referencedColumnName = "username")
-    private User user;
+    private String user;
 
     @NotNull
     @Column(name = "updated_at", nullable = false)
