@@ -2,14 +2,11 @@ package org.caykhe.interactiveservice.controllers;
 
 import lombok.RequiredArgsConstructor;
 import org.caykhe.interactiveservice.dtos.BookmarkDetailRequest;
-import org.caykhe.interactiveservice.models.Bookmark;
-import org.caykhe.interactiveservice.models.BookmarkDetail;
 import org.caykhe.interactiveservice.services.BookmarkService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -17,38 +14,19 @@ import java.util.Optional;
 public class BookmarkController {
     final BookmarkService bookmarkService;
 
-//    @PostMapping("/createBookmark")
-//    public ResponseEntity<?> createBookmark() {
-//        return new ResponseEntity<>(bookmarkService.createBookmark(), HttpStatus.CREATED);
-//    }
-
-    @PostMapping("/createBookmarkPost/{bookmarkId}")
-    public ResponseEntity<?> createBookmarkPost(@PathVariable Integer bookmarkId, @RequestBody BookmarkDetailRequest request) {
-        Optional<Bookmark> bookmark = bookmarkService.getBookmarkById(bookmarkId);
-        if (bookmark.isPresent()) {
-            BookmarkDetail bookmarkDetail = bookmarkService.addBookmarkDetail(bookmark.get(), request.getTargetId(), request.getType());
-            return new ResponseEntity<>(bookmarkDetail, HttpStatus.CREATED);
-        } else {
-            return new ResponseEntity<>("Lỗi Không tìm thấy bookmark cần tạo", HttpStatus.BAD_REQUEST);
-        }
-    }
-
     @PostMapping("/bookmark")
     public ResponseEntity<?> bookmark(@RequestBody BookmarkDetailRequest request) {
         return new ResponseEntity<>(bookmarkService.bookmark( request), HttpStatus.OK);
     }
-
     @DeleteMapping("/unBookmark")
-    public ResponseEntity<?> unBookmark(@RequestParam String username,
+    public ResponseEntity<?> unBookmark(
                                         @RequestBody BookmarkDetailRequest bookmarkDetailRequest) {
-        bookmarkService.unBookmark(username, bookmarkDetailRequest);
+        bookmarkService.unBookmark( bookmarkDetailRequest);
         return new ResponseEntity<>("Xóa thành công", HttpStatus.OK);
     }
-
     @PostMapping("/isBookmark")
     public Boolean isBookmark(
-            @RequestParam String username,
             @RequestBody BookmarkDetailRequest bookmarkDetailRequest) {
-        return bookmarkService.isBookmark(username, bookmarkDetailRequest);
+        return bookmarkService.isBookmark(bookmarkDetailRequest);
     }
 }

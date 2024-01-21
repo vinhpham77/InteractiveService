@@ -29,11 +29,6 @@ public class VoteController {
         voteService.unVote(targetId,targetType);
         return new ResponseEntity<>("Xóa thành công",HttpStatus.OK) ;
     }
-    @GetMapping("/findBy")
-    public ResponseEntity<?> findBy(@RequestParam Integer targetId,@RequestParam Boolean targetType) {
-        return new ResponseEntity<>(voteService.voteById(targetId,targetType),HttpStatus.OK) ;
-    }
-
 
     @GetMapping("/checkVote")
     public ResponseEntity<?> checkVote(@RequestParam Integer targetId,@RequestParam Boolean targetType) {

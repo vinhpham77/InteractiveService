@@ -28,13 +28,7 @@ public class VoteService {
 
 @Transactional
     public Vote voteById(Integer targetId,Boolean targetType) {
-
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String  username =  SecurityContextHolder.getContext().getAuthentication().getName();
-        System.out.println(targetId);
-        System.out.println(targetType);
-        System.out.println(username);
-
         Optional<Vote> vote=voteRepository.findByTargetIdAndTargetTypeAndUsername(targetId,targetType,username);
         if(vote.isPresent())
             return vote.get();
