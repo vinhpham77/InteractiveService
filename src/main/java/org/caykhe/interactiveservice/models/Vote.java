@@ -3,9 +3,6 @@ package org.caykhe.interactiveservice.models;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
-
 import java.time.Instant;
 
 @Getter
@@ -15,20 +12,20 @@ import java.time.Instant;
 @NoArgsConstructor
 @AllArgsConstructor
 @IdClass(VoteId.class)
-@Table(name = "votes",schema = "ITForum")
+@Table(name = "votes")
 
 public class Vote {
-
     @Id
     @Column(name = "target_id", nullable = false)
     private Integer targetId;
 
     @Id
     @Column(name = "target_type", nullable = false)
-    private Boolean targetType = false;
+    private Boolean targetType ;
 
     @Id
-    private String user;
+    @Column(name = "username")
+    private String username;
 
     @NotNull
     @Column(name = "updated_at", nullable = false)

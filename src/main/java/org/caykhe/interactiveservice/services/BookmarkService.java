@@ -10,6 +10,7 @@ import org.caykhe.interactiveservice.models.BookmarkDetailId;
 import org.caykhe.interactiveservice.repositories.BookmarkDetailRepository;
 import org.caykhe.interactiveservice.repositories.BookmarkRepository;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -48,11 +49,12 @@ public class BookmarkService {
 
     }
     
-    public BookmarkDetail bookmark(String username, BookmarkDetailRequest request) {
+    public BookmarkDetail bookmark(BookmarkDetailRequest request) {
+        String username= SecurityContextHolder.getContext().getAuthentication().getName();
         Optional<User> userOptional = userService.getByUsername(username);
 
         if (userOptional.isPresent()) {
-            Optional<Bookmark> bookmarkOptional = bookmarkRepository.findByUsername(String.valueOf(userOptional.get()));
+            Optional<Bookmark> bookmarkOptional = bookmarkRepository.findByUsername(username);
             Bookmark bookmark;
             bookmark = bookmarkOptional.orElseGet(() -> createBookmark(username));
             return addBookmarkDetail(bookmark, request.getTargetId(), request.getType());
@@ -74,8 +76,11 @@ public class BookmarkService {
 
         Integer targetId = bookmarkPostRequest.getTargetId();
         Boolean type = bookmarkPostRequest.getType();
-
-        BookmarkDetail bookmarkDetail = bookmarkDetailRepository.findByTargetIdAndAndType(targetId, type)
+        BookmarkDetailId bookmarkDetailId=new BookmarkDetailId();
+        bookmarkDetailId.setBookmarkId(bookmark.getId());
+        bookmarkDetailId.setType(type);
+        bookmarkDetailId.setTargetId(targetId);
+        BookmarkDetail bookmarkDetail = bookmarkDetailRepository.findById(bookmarkDetailId)
                 .orElseThrow(() -> new ApiException("BookmarkDetail not found for targetId: " + targetId + " and type: " + type, HttpStatus.NOT_FOUND));
 
         bookmarkDetailRepository.delete(bookmarkDetail);
@@ -88,14 +93,17 @@ public class BookmarkService {
     public Boolean isBookmark(String username, BookmarkDetailRequest bookmarkPostRequest) {
         Optional<User> user = userService.getByUsername(username);
         if (user.isPresent()) {
-            Optional<Bookmark> bookmark = bookmarkRepository.findByUsername(user.get().getUsername());
+            Optional<Bookmark> bookmark = bookmarkRepository.findByUsername(username);
             if (bookmark.isEmpty()) {
                 return false;
             } else {
                 Integer targetId = bookmarkPostRequest.getTargetId();
                 Boolean type = bookmarkPostRequest.getType();
-
-                Optional<BookmarkDetail> bookmarkPost = bookmarkDetailRepository.findByTargetIdAndAndType(targetId, type);
+                BookmarkDetailId bookmarkDetailId=new BookmarkDetailId();
+                bookmarkDetailId.setBookmarkId(bookmark.get().getId());
+                bookmarkDetailId.setType(type);
+                bookmarkDetailId.setTargetId(targetId);
+                Optional<BookmarkDetail> bookmarkPost = bookmarkDetailRepository.findById(bookmarkDetailId);
                 return bookmarkPost.isPresent();
             }
         } else {

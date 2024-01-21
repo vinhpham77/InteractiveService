@@ -17,10 +17,10 @@ import java.util.Optional;
 public class BookmarkController {
     final BookmarkService bookmarkService;
 
-    @PostMapping("/createBookmark/{username}")
-    public ResponseEntity<?> createBookmark(@PathVariable String username) {
-        return new ResponseEntity<>(bookmarkService.createBookmark(username), HttpStatus.CREATED);
-    }
+//    @PostMapping("/createBookmark")
+//    public ResponseEntity<?> createBookmark() {
+//        return new ResponseEntity<>(bookmarkService.createBookmark(), HttpStatus.CREATED);
+//    }
 
     @PostMapping("/createBookmarkPost/{bookmarkId}")
     public ResponseEntity<?> createBookmarkPost(@PathVariable Integer bookmarkId, @RequestBody BookmarkDetailRequest request) {
@@ -33,9 +33,9 @@ public class BookmarkController {
         }
     }
 
-    @PostMapping("/bookmark/{username}")
-    public ResponseEntity<?> bookmark(@PathVariable String username, @RequestBody BookmarkDetailRequest request) {
-        return new ResponseEntity<>(bookmarkService.bookmark(username, request), HttpStatus.OK);
+    @PostMapping("/bookmark")
+    public ResponseEntity<?> bookmark(@RequestBody BookmarkDetailRequest request) {
+        return new ResponseEntity<>(bookmarkService.bookmark( request), HttpStatus.OK);
     }
 
     @DeleteMapping("/unBookmark")

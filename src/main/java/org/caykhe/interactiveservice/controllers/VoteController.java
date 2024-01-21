@@ -34,6 +34,7 @@ public class VoteController {
         return new ResponseEntity<>(voteService.voteById(targetId,targetType),HttpStatus.OK) ;
     }
 
+
     @GetMapping("/checkVote")
     public ResponseEntity<?> checkVote(@RequestParam Integer targetId,@RequestParam Boolean targetType) {
         return new ResponseEntity<>(voteService.hasVoted(targetId,targetType),HttpStatus.OK) ;

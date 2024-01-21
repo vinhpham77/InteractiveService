@@ -26,22 +26,28 @@ public class VoteService {
         return voteRepository.findAll();
     }
 
+@Transactional
     public Vote voteById(Integer targetId,Boolean targetType) {
 
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String  username =  SecurityContextHolder.getContext().getAuthentication().getName();
+        System.out.println(targetId);
+        System.out.println(targetType);
+        System.out.println(username);
 
-        return voteRepository.findByTargetIdAndTargetTypeAndUser(targetId,targetType,user.getUsername())
-                .orElseThrow(() -> new ApiException("Vote không tìm thấy", HttpStatus.NOT_FOUND));
+        Optional<Vote> vote=voteRepository.findByTargetIdAndTargetTypeAndUsername(targetId,targetType,username);
+        if(vote.isPresent())
+            return vote.get();
+        else throw new ApiException("Vote không tìm thấy", HttpStatus.NOT_FOUND);
     }
     @Transactional
     public Vote createVote(VoteRequest voteRequest) {
-        var user = userService.getByUsername(voteRequest.getUsername());
-        User managedUser = entityManager.merge(user.get());
+        String username =  SecurityContextHolder.getContext().getAuthentication().getName();
         Vote vote = Vote.builder()
                 .targetId(voteRequest.getTargetId())
                 .voteType(voteRequest.getVoteType())
                 .targetType(voteRequest.getTargetType())
-                .user(managedUser.getUsername())
+                .username(username)
                 .updatedAt(Instant.now()).build();
         return voteRepository.save(vote);
     }
@@ -60,7 +66,7 @@ public class VoteService {
         }
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 System.out.println(user.getUsername());
-        Optional<Vote> vote= voteRepository.findByTargetIdAndTargetTypeAndUser(targetId,targetType,user.getUsername());
+        Optional<Vote> vote= voteRepository.findByTargetIdAndTargetTypeAndUsername(targetId,targetType,username);
         return vote.orElse(null);
 
     }
