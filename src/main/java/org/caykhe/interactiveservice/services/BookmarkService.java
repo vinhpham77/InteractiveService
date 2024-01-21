@@ -55,9 +55,8 @@ public class BookmarkService {
     
     public BookmarkDetail bookmark(BookmarkDetailRequest request) {
         String username= SecurityContextHolder.getContext().getAuthentication().getName();
-        Optional<User> userOptional = userService.getByUsername(username);
 
-        if (userOptional.isPresent()) {
+        if (!username.equals("anonymous")) {
             Optional<Bookmark> bookmarkOptional = bookmarkRepository.findByUsername(username);
             Bookmark bookmark;
             bookmark = bookmarkOptional.orElseGet(() -> createBookmark(username));
@@ -73,10 +72,7 @@ public class BookmarkService {
 
     public void unBookmark(BookmarkDetailRequest bookmarkPostRequest) {
         String username= SecurityContextHolder.getContext().getAuthentication().getName();
-        User user = userService.getByUsername(username)
-                .orElseThrow(() -> new ApiException("User not found with username: " + username, HttpStatus.NOT_FOUND));
-
-        Bookmark bookmark = bookmarkRepository.findByUsername(user.getUsername())
+               Bookmark bookmark = bookmarkRepository.findByUsername(username)
                 .orElseThrow(() -> new ApiException("Bookmark not found for user: " + username, HttpStatus.NOT_FOUND));
 
         Integer targetId = bookmarkPostRequest.getTargetId();
@@ -97,8 +93,7 @@ public class BookmarkService {
 
     public Boolean isBookmark( BookmarkDetailRequest bookmarkPostRequest) {
         String username=SecurityContextHolder.getContext().getAuthentication().getName();
-        Optional<User> user = userService.getByUsername(username);
-        if (user.isPresent()) {
+        if (!username.equals("anonymous")){
             Optional<Bookmark> bookmark = bookmarkRepository.findByUsername(username);
             if (bookmark.isEmpty()) {
                 return false;
