@@ -47,6 +47,8 @@ public class SecurityConfig {
                     return corsConfiguration;
                 }))
                 .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers("/votes/checkVote").permitAll()
+                        .requestMatchers("/bookmarks/isBookmark").permitAll()
                         .anyRequest().authenticated())
 
                 .exceptionHandling(exception -> exception

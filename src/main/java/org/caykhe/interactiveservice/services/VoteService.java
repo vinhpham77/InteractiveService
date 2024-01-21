@@ -59,7 +59,6 @@ public class VoteService {
             return null;
         }
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-System.out.println(user.getUsername());
         Optional<Vote> vote= voteRepository.findByTargetIdAndTargetTypeAndUsername(targetId,targetType,username);
         return vote.orElse(null);
 
