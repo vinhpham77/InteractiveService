@@ -29,4 +29,18 @@ public class BookmarkController {
             @RequestBody BookmarkDetailRequest bookmarkDetailRequest) {
         return bookmarkService.isBookmark(bookmarkDetailRequest);
     }
+
+    @GetMapping("/getPost")
+    public ResponseEntity<?> getPostByUserName(@RequestParam(name = "username") String username,
+                                               @RequestParam(required = false, name = "page") Integer page,
+                                               @RequestParam(required = false, name = "limit", defaultValue = "10") Integer limit) {
+        return new ResponseEntity<>(bookmarkService.getPostByUserName(username, page, limit), HttpStatus.OK);
+    }
+
+    @GetMapping("/getSeries")
+    public ResponseEntity<?> getSeriesByUserName(@RequestParam(name = "username") String username,
+                                                 @RequestParam(required = false, name = "page") Integer page,
+                                                 @RequestParam(required = false, name = "limit", defaultValue = "10") Integer limit) {
+        return new ResponseEntity<>(bookmarkService.getSeriesByUserName(username, page, limit), HttpStatus.OK);
+    }
 }

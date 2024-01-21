@@ -3,6 +3,7 @@ package org.caykhe.interactiveservice.services;
 import lombok.RequiredArgsConstructor;
 import org.caykhe.interactiveservice.dtos.ApiException;
 import org.caykhe.interactiveservice.dtos.BookmarkDetailRequest;
+import org.caykhe.interactiveservice.dtos.ResultCount;
 import org.caykhe.interactiveservice.dtos.User;
 import org.caykhe.interactiveservice.models.Bookmark;
 import org.caykhe.interactiveservice.models.BookmarkDetail;
@@ -13,7 +14,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -111,6 +115,50 @@ public class BookmarkService {
         } else {
             return false;
         }
+    }
+
+    public ResultCount<Integer> getPostByUserName(String createdBy, Integer page, Integer limit) {
+        Bookmark bookmark = bookmarkRepository.findByUsername(createdBy)
+                .orElseThrow(() -> new ApiException("Bạn chưa bookmark", HttpStatus.NOT_FOUND));
+        try {
+            List<Integer> targetIds = getTargetsByBookmark(bookmark, false);
+            Collections.reverse(targetIds);
+            page = page < 1 ? 1 : page;
+            int fromIndex = (page-1)*limit;
+            int toIndex = fromIndex + limit;
+            if(fromIndex > targetIds.size())
+                fromIndex = targetIds.size();
+            if(toIndex > targetIds.size())
+                toIndex = targetIds.size();
+            return new ResultCount<>(targetIds.subList(fromIndex, toIndex), targetIds.size());
+        } catch (Exception e) {
+            throw new ApiException("Có lỗi xảy ra. Vui lòng thử lại sau!", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public ResultCount<Integer> getSeriesByUserName(String createdBy, Integer page, Integer limit) {
+        Bookmark bookmark = bookmarkRepository.findByUsername(createdBy)
+                .orElseThrow(() -> new ApiException("Bạn chưa bookmark", HttpStatus.NOT_FOUND));
+        try {
+            List<Integer> targetIds = getTargetsByBookmark(bookmark, true);
+            Collections.reverse(targetIds);
+            page = page < 1 ? 1 : page;
+            int fromIndex = (page-1)*limit;
+            int toIndex = fromIndex + limit;
+            if(fromIndex > targetIds.size())
+                fromIndex = targetIds.size();
+            if(toIndex > targetIds.size())
+                toIndex = targetIds.size();
+            return new ResultCount<>(targetIds.subList(fromIndex, toIndex), targetIds.size());
+        } catch (Exception e) {
+            throw new ApiException("Có lỗi xảy ra. Vui lòng thử lại sau!", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    private List<Integer> getTargetsByBookmark(Bookmark bookmark, boolean isSeries) {
+        List<BookmarkDetail> bookmarkDetails = isSeries ? bookmarkDetailRepository.findByBookmarkAndTypeFalse(bookmark)
+                : bookmarkDetailRepository.findByBookmarkAndTypeTrue(bookmark);
+        return bookmarkDetails.stream().map(BookmarkDetail::getTargetId).collect(Collectors.toList());
     }
 
 }
